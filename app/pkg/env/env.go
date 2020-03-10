@@ -15,7 +15,7 @@ import (
 
 type config struct {
 	Environment    string `env:"GO_ENV,default=production"`
-	SignUpDisabled bool   `env:"SIGNUP_DISABLED,default=true"`
+	SignUpDisabled bool   `env:"SIGNUP_DISABLED,default=false"`
 	AutoSSL        bool   `env:"SSL_AUTO,default=false"`
 	SSLCert        string `env:"SSL_CERT"`
 	SSLCertKey     string `env:"SSL_CERT_KEY"`
