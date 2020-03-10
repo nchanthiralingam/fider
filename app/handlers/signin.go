@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/getfider/fider/app/pkg/env"
 	"net/http"
 	"time"
 
@@ -21,6 +22,9 @@ import (
 // SignInPage renders the sign in page
 func SignInPage() web.HandlerFunc {
 	return func(c *web.Context) error {
+		if env.Config.SignUpDisabled {
+			return c.NotFound()
+		}
 
 		if c.Tenant().IsPrivate || c.Tenant().Status == enum.TenantLocked {
 			return c.Page(web.Props{
@@ -36,6 +40,10 @@ func SignInPage() web.HandlerFunc {
 // NotInvitedPage renders the not invited page
 func NotInvitedPage() web.HandlerFunc {
 	return func(c *web.Context) error {
+		if env.Config.SignUpDisabled {
+			return c.NotFound()
+		}
+
 		return c.Render(http.StatusForbidden, "not-invited.html", web.Props{
 			Title:       "Not Invited",
 			Description: "We couldn't find your account for your email address.",
@@ -46,6 +54,10 @@ func NotInvitedPage() web.HandlerFunc {
 // SignInByEmail sends a new email with verification key
 func SignInByEmail() web.HandlerFunc {
 	return func(c *web.Context) error {
+		if env.Config.SignUpDisabled {
+			return c.NotFound()
+		}
+
 		input := new(actions.SignInByEmail)
 		if result := c.BindTo(input); !result.Ok {
 			return c.HandleValidation(result)
@@ -68,6 +80,7 @@ func SignInByEmail() web.HandlerFunc {
 
 // VerifySignInKey checks if verify key is correct and sign in user
 func VerifySignInKey(kind enum.EmailVerificationKind) web.HandlerFunc {
+
 	return func(c *web.Context) error {
 		result, err := validateKey(kind, c)
 		if result == nil {
